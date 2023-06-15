@@ -3,5 +3,5 @@ export const PROJECTS_MOCK = [{
   name: 'Best Project',
   description: 'The Best of The Best',
   donationGoal: 666666,
-  donationCurrent: 333333
+  donationAmount: 333333
 }]

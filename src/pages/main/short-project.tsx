@@ -7,14 +7,14 @@ type ProjectProps = {
   name: string,
   description: string;
   donationGoal: number;
-  donationCurrent: number;
+  donationAmount: number;
 }
 export const ShortProject = ({
   id,
   name,
   description,
   donationGoal,
-  donationCurrent
+                               donationAmount
 }: ProjectProps) => {
   return (
     <Card>
@@ -26,7 +26,7 @@ export const ShortProject = ({
           <Typography>{description}</Typography>
         </Grid>
         <Grid item>
-          <Typography>{donationCurrent}$/{donationGoal}$</Typography>
+          <Typography>{donationAmount}$/{donationGoal}$</Typography>
         </Grid>
         <Grid item>
           <Button variant={'contained'}>
