@@ -1,6 +1,4 @@
 import React from "react";
-import {Project} from "../../feature/project";
-import {PROJECTS_MOCK} from "../../MOCK_DATA";
 
 export const ProjectPage = () => {
   const handleSaveProject = () => {
@@ -9,7 +7,7 @@ export const ProjectPage = () => {
 
   return (
     <>
-      <Project {...PROJECTS_MOCK[0]} />
+      TODO alike add-project
     </>
   )
 }

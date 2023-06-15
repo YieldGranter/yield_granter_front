@@ -11,13 +11,17 @@ export const Profile = () => {
   })
   const { disconnect } = useDisconnect()
 
-  if (isConnected)
-    return (
-      <div>
-        Connected to {cropAddress(address as string)}
-        <Button color={'inherit'} onClick={() => disconnect()}>Disconnect</Button>
-      </div>
-    )
+  const handleProfile = () => {
+    if (isConnected) {
+      disconnect()
+      return
+    }
+    connect()
+  }
 
-  return <Button color={'inherit'} onClick={() => connect()}>Connect Wallet</Button>
+  return (
+    <Button color={'inherit'} onClick={handleProfile}>
+      {isConnected ? cropAddress(address as string) : 'Connect'}
+    </Button>
+  )
 }
