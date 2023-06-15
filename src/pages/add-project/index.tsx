@@ -51,9 +51,10 @@ export const AddProjectPage = () => {
       const cidV0 = res.cid.toV0().toString()
 
       // TODO check it
+      // @ts-ignore
       write({
-        from: address,
-        value: cidV0,
+        // from: address,
+        args: [cidV0],
       })
       console.log('res: ', res)
       console.log('cidV0: ', cidV0)

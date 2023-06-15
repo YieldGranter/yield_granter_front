@@ -1,5 +1,5 @@
 export const ipfsStorageContract = {
-  address: "", // TODO добавить адресс сетки
+  address: "0x0", // TODO добавить адресс сетки
   ABI: [
     {
       "inputs": [
@@ -37,7 +37,7 @@ export const ipfsStorageContract = {
 }
 
 export const donationAmountStorageContract = {
-  address: "", // TODO
+  address: "0x0", // TODO
   ABI: [
     {
       "inputs": [
