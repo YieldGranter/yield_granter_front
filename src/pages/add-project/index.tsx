@@ -4,7 +4,7 @@ import {PROJECTS_MOCK} from "../../MOCK_DATA";
 import { create } from 'ipfs-http-client'
 //@ts-ignore
 import { Buffer } from "buffer";
-import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { useContractWrite } from 'wagmi'
 import { ipfsStorageContract } from "../../constants";
 
 export const AddProjectPage = () => {
@@ -27,30 +27,23 @@ export const AddProjectPage = () => {
     setClient(client)
   }, [])
 
-  // this.ipfsStorageContract.saveCID(cidV0)
-  //@ts-ignore
-  const { config } = usePrepareContractWrite({
+  const { data, isLoading, isSuccess, write, ...res } = useContractWrite({
     address: ipfsStorageContract.address as `0x${string}`,
     abi: ipfsStorageContract.ABI,
     functionName: 'saveCID',
   })
-  console.log('contractWriteConfig: ', config)
-  const { data, isLoading, isSuccess, write } = useContractWrite(config as any)
-  const { address, isConnected } = useAccount()
+
   const handleSaveProject = () => {
     const jsonString = JSON.stringify(PROJECTS_MOCK[0])
 
     client.add(jsonString).then((res: any) => {
       const cidV0 = res.cid.toV0().toString()
 
-      // TODO check it
-      // @ts-ignore
+      console.log('hash: ', cidV0)
+
       write({
-        // from: address,
         args: [cidV0],
       })
-
-      console.log('handleSaveProject: ', {res, cidV0})
     });
   }
 

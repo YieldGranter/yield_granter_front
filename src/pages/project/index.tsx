@@ -2,8 +2,22 @@ import React from "react";
 import {Button, Card, Grid, TextField, Typography} from "@mui/material";
 import {PROJECTS_MOCK} from "../../MOCK_DATA";
 
+/*async getProject(cid) {
+  const resp = await this.client.cat(cid)
+  let content = []
+  for await (const chunk of resp) {
+    content = [...content, ...chunk]
+  }
+  const raw = Buffer.from(content).toString('utf8')
+  return JSON.parse(raw)
+}*/
+
 export const ProjectPage = () => {
   const project = PROJECTS_MOCK[0];
+
+  React.useEffect(() => {
+
+  }, [])
 
   const handleSaveProject = () => {
     // TODO save logic

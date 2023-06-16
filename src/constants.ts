@@ -1,5 +1,5 @@
 export const ipfsStorageContract = {
-  address: "0x0", // TODO добавить адресс сетки
+  address: "0x757e9B2cbd9B6719B5732039D9C640992bE159E9", // TODO добавить адресс сетки
   ABI: [
     {
       "inputs": [

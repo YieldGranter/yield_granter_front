@@ -3,8 +3,11 @@ import { Header } from "../feature/header";
 import { MainPage } from "../pages/main";
 import { ProjectPage } from "../pages/project";
 import { AddProjectPage } from "../pages/add-project";
+import {useAccount} from "wagmi";
 
 export const Router = () => {
+  const { address, isConnected } = useAccount()
+  console.log('address: ', address)
   return (
     <Routes>
       <Route path={"/"} element={<Header />}>
