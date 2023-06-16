@@ -2,13 +2,6 @@ export const ipfsStorageContract = {
   address: "0x757e9B2cbd9B6719B5732039D9C640992bE159E9", // TODO добавить адресс сетки
   ABI: [
     {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
       "name": "cids",
       "outputs": [
         {
