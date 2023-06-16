@@ -2,6 +2,7 @@ import React from "react";
 import {Box, Button, Stack, TextField} from "@mui/material";
 import {PROJECTS_MOCK} from "../../MOCK_DATA";
 import { create } from 'ipfs-http-client'
+//@ts-ignore
 import { Buffer } from "buffer";
 import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { ipfsStorageContract } from "../../constants";
@@ -10,17 +11,9 @@ export const AddProjectPage = () => {
   const [client, setClient] = React.useState<any>()
 
   React.useEffect(() => {
-    console.log('process.env: ', process.env)
     const projectId = process.env.REACT_APP_INFURA_PROJECT_ID
     const projectSecret = process.env.REACT_APP_INFURA_PROJECT_SECRET
-    const auth =
-      'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
-
-    console.log('auth: ', {
-      auth,
-      projectId,
-      projectSecret
-    })
+    const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
 
     const client = create({
       host: 'ipfs.infura.io',
@@ -41,7 +34,7 @@ export const AddProjectPage = () => {
     abi: ipfsStorageContract.ABI,
     functionName: 'saveCID',
   })
-  console.log('config: ', config)
+  console.log('contractWriteConfig: ', config)
   const { data, isLoading, isSuccess, write } = useContractWrite(config as any)
   const { address, isConnected } = useAccount()
   const handleSaveProject = () => {
@@ -56,8 +49,8 @@ export const AddProjectPage = () => {
         // from: address,
         args: [cidV0],
       })
-      console.log('res: ', res)
-      console.log('cidV0: ', cidV0)
+
+      console.log('handleSaveProject: ', {res, cidV0})
     });
   }
 

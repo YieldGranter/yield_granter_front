@@ -1,24 +1,46 @@
-import {AppBar, Box, Button, Toolbar, Typography} from "@mui/material";
+import { AppBar, Box, Button, Grid, Toolbar, Typography } from "@mui/material";
 import React from "react";
-import {Link, Outlet} from "react-router-dom";
-import {Profile} from "./profile";
+import { Link, Outlet } from "react-router-dom";
+import { Profile } from "./profile";
 
 export const Header = () => {
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+    <Box>
+      <AppBar position="static" sx={{padding: 1}}>
         <Toolbar>
-          <Link to={'/'}>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Yield Granter
-            </Typography>
-          </Link>
+          <Grid container justifyContent={'space-between'} alignItems={'center'}>
+            <Grid item>
+              <Link to={'/'}>
+                <Typography variant="h3" component="div">
+                  YieldGranter
+                </Typography>
+              </Link>
 
-          <Button color={'secondary'} component={Link as any} to={'/add-project'}>
-            Apply project
-          </Button>
+              <Typography width={450}>
+                Permissionless charity protocol where you can farm and donate simultaneously
+              </Typography>
+            </Grid>
 
-          <Profile />
+            <Grid item>
+              <Button
+                variant={'outlined'}
+                color={'primary'}
+                component={Link as any}
+                to={'/add-project'}
+                sx={{
+                  background: 'white',
+                  marginRight: '16px',
+                  "&:hover": {
+                    backgroundColor: 'white',
+                  }
+                }}
+              >
+                Apply project
+              </Button>
+
+              <Profile />
+            </Grid>
+          </Grid>
         </Toolbar>
       </AppBar>
 

@@ -14,7 +14,7 @@ export const ShortProject = ({
   name,
   description,
   donationGoal,
-                               donationAmount
+  donationAmount
 }: ProjectProps) => {
   return (
     <Card>
