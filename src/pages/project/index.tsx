@@ -18,6 +18,7 @@ export const ProjectPage = () => {
       for await (let value of generator) {
         const jsonString = Buffer.from(value).toString('utf8')
         const parsedData = JSON.parse(jsonString)
+        console.log('ipfsClient.cat: ', parsedData)
         setProject(parsedData)
       }
     }
