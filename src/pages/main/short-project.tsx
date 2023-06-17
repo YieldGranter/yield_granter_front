@@ -1,6 +1,7 @@
 import {Button, Card, Grid, Typography} from "@mui/material";
 import React from "react";
 import {Link} from "react-router-dom";
+import {formatNumber} from "../../utils";
 
 type ProjectProps = {
   id: number;
@@ -26,7 +27,9 @@ export const ShortProject = ({
           <Typography>{description}</Typography>
         </Grid>
         <Grid item>
-          <Typography>{donationAmount}$/{donationGoal}$</Typography>
+          <Typography>
+            $ {formatNumber(donationAmount)} / $ {formatNumber(donationGoal)}
+          </Typography>
         </Grid>
         <Grid item>
           <Button variant={'contained'}>

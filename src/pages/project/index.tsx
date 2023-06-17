@@ -1,23 +1,28 @@
 import React from "react";
 import {Button, Card, Grid, TextField, Typography} from "@mui/material";
 import {PROJECTS_MOCK} from "../../MOCK_DATA";
-
-/*async getProject(cid) {
-  const resp = await this.client.cat(cid)
-  let content = []
-  for await (const chunk of resp) {
-    content = [...content, ...chunk]
-  }
-  const raw = Buffer.from(content).toString('utf8')
-  return JSON.parse(raw)
-}*/
+import {useParams} from "react-router-dom";
+import {ipfsClient} from "../../utils";
+//@ts-ignore
+import { Buffer } from "buffer";
 
 export const ProjectPage = () => {
-  const project = PROJECTS_MOCK[0];
+  const [project, setProject] = React.useState<any>(PROJECTS_MOCK[0])
+  let { projectId } = useParams();
+
+  projectId = 'QmRxMsceQ2CAcbyuqnkhSxiv5X9QCa1TEnWMXadJQTMUHF' // TODO remove
 
   React.useEffect(() => {
-
-  }, [])
+    const getProject = async () => {
+      const generator = ipfsClient.cat(projectId as string)
+      for await (let value of generator) {
+        const jsonString = Buffer.from(value).toString('utf8')
+        const parsedData = JSON.parse(jsonString)
+        setProject(parsedData)
+      }
+    }
+    getProject()
+  }, [projectId])
 
   const handleSaveProject = () => {
     // TODO save logic
@@ -25,10 +30,10 @@ export const ProjectPage = () => {
 
   return (
     <div>
-      <Grid container>
+      <Grid container justifyContent={'space-between'}>
         <Grid item>
           <Typography variant={'h4'}>
-            Great Science DAO
+            {project.name}
           </Typography>
 
           <Typography>
@@ -37,9 +42,16 @@ export const ProjectPage = () => {
         </Grid>
 
         <Grid item>
-          <Card>
-            <Typography>{project.donationGoal} USDC Donation goal</Typography>
-            <Typography>{project.donationAmount} USDC Received</Typography>
+          <Card sx={{ padding: 2 }}>
+            <div>
+              <Typography variant={'h5'} component={'span' as any}>{project.donationGoal} </Typography>
+              <Typography component={'span' as any}>USDC Donation goal</Typography>
+            </div>
+
+            <div>
+              <Typography variant={'h5'} component={'span' as any}>{project.donationAmount} </Typography>
+              <Typography component={'span' as any}>USDC Received</Typography>
+            </div>
           </Card>
         </Grid>
       </Grid>

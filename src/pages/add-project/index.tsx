@@ -6,26 +6,27 @@ import { create } from 'ipfs-http-client'
 import { Buffer } from "buffer";
 import { useContractWrite } from 'wagmi'
 import { ipfsStorageContract } from "../../constants";
+import {ipfsClient} from "../../utils";
 
 export const AddProjectPage = () => {
-  const [client, setClient] = React.useState<any>()
-
-  React.useEffect(() => {
-    const projectId = process.env.REACT_APP_INFURA_PROJECT_ID
-    const projectSecret = process.env.REACT_APP_INFURA_PROJECT_SECRET
-    const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
-
-    const client = create({
-      host: 'ipfs.infura.io',
-      port: 5001,
-      protocol: 'https',
-      headers: {
-        authorization: auth,
-      },
-    })
-
-    setClient(client)
-  }, [])
+  // const [client, setClient] = React.useState<any>()
+  //
+  // React.useEffect(() => {
+  //   const projectId = process.env.REACT_APP_INFURA_PROJECT_ID
+  //   const projectSecret = process.env.REACT_APP_INFURA_PROJECT_SECRET
+  //   const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
+  //
+  //   const client = create({
+  //     host: 'ipfs.infura.io',
+  //     port: 5001,
+  //     protocol: 'https',
+  //     headers: {
+  //       authorization: auth,
+  //     },
+  //   })
+  //
+  //   setClient(client)
+  // }, [])
 
   const { data, isLoading, isSuccess, write, ...res } = useContractWrite({
     address: ipfsStorageContract.address as `0x${string}`,
@@ -36,7 +37,7 @@ export const AddProjectPage = () => {
   const handleSaveProject = () => {
     const jsonString = JSON.stringify(PROJECTS_MOCK[0])
 
-    client.add(jsonString).then((res: any) => {
+    ipfsClient.add(jsonString).then((res: any) => {
       const cidV0 = res.cid.toV0().toString()
 
       console.log('hash: ', cidV0)

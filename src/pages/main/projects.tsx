@@ -22,16 +22,16 @@ export const Projects = () => {
   const { data, isLoading, isSuccess, ...res } = useContractRead({
     address: ipfsStorageContract.address as `0x${string}`,
     abi: ipfsStorageContract.ABI,
-    functionName: 'cids',
+    functionName: 'getCIDs',
   })
   console.log('data: ' , {data, isLoading, isSuccess, ...res})
   React.useEffect(() => {
     if (data && !projects) {
       const getProjects = async () => {
-        const projects = await Promise.all(data.map(cid => ipfsClient.cat(cid)))
-        console.log('projects: ', projects)
-        // TODO load donation info for each project...
-        setProjects(projects)
+        // TODO load donation info for each project from contract
+        // const projects = await Promise.all(data.map((cid: string) => ipfsClient.cat(cid)))
+        // setProjects(projects)
+        // console.log('projects: ', projects)
       }
 
       getProjects()
