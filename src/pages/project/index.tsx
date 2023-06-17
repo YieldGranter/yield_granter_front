@@ -1,10 +1,13 @@
 import React from "react";
-import {Button, Card, Grid, TextField, Typography} from "@mui/material";
+import {Box, Button, Card, Grid, Stack, TextField, Typography} from "@mui/material";
 import {PROJECTS_MOCK} from "../../MOCK_DATA";
 import {useParams} from "react-router-dom";
 import {ipfsClient} from "../../utils";
 //@ts-ignore
 import { Buffer } from "buffer";
+import {useContractWrite} from "wagmi";
+import {ipfsStorageContract, susdContract, usdcContract, yieldGranterContract} from "../../constants";
+import bigInt from "big-integer";
 
 export const ProjectPage = () => {
   const [project, setProject] = React.useState<any>(PROJECTS_MOCK[0])
@@ -25,8 +28,46 @@ export const ProjectPage = () => {
     getProject()
   }, [projectId])
 
-  const handleSaveProject = () => {
-    // TODO save logic
+  const [firstIncome, setFirstIncome] = React.useState('')
+  const [secondIncome, setSecondIncome] = React.useState('')
+
+  const yieldDepositWrite = useContractWrite({
+    address: yieldGranterContract.address as `0x${string}`,
+    abi: yieldGranterContract.ABI,
+    functionName: 'depositProxy',
+  })
+  const yieldClaimWrite = useContractWrite({
+    address: yieldGranterContract.address as `0x${string}`,
+    abi: yieldGranterContract.ABI,
+    functionName: 'claim',
+  })
+  const usdcApproveWrite = useContractWrite({
+    address: usdcContract.address as `0x${string}`,
+    abi: usdcContract.ABI,
+    functionName: 'approve',
+  })
+  const susdApproveWrite = useContractWrite({
+    address: susdContract.address as `0x${string}`,
+    abi: susdContract.ABI,
+    functionName: 'approve',
+  })
+  const handleDeposit = () => {
+    // TODO getting approves
+    yieldDepositWrite.write({
+      args: [bigInt(firstIncome), bigInt(secondIncome), project.address]
+    })
+    // let abi = ["function approve(address _spender, uint256 _value) public returns (bool success)"]
+    // let provider = ethers.getDefaultProvider('ropsten')
+    // let contract = new ethers.Contract(tokenAddress, abi, provider)
+    // await contract.approve(accountAddress, amount)
+  }
+
+  const handleWithdraw = () => {
+    // TODO withdraw
+  }
+
+  const handleClaim = () => {
+    yieldClaimWrite.write()
   }
 
   return (
@@ -57,27 +98,39 @@ export const ProjectPage = () => {
         </Grid>
       </Grid>
 
-      <Typography variant={'h6'}>About:</Typography>
+      <Typography variant={'h6'}><b>About:</b></Typography>
       <Typography variant={'body1'}>{project.description}</Typography>
 
-      <Card>
-        <Typography>Farming pool: Velodrom sAMM USDC/sUSD</Typography>
-        <Typography>Yield distribution: 95/5</Typography>
-        <Typography>Total pool size: 1000000 USDC</Typography>
-        <Typography>Your deposit: 0 USDC</Typography>
-        <Typography>Total profit: 0 USDC</Typography>
-        <Typography>Total donation: 0 USDC</Typography>
-        <Typography>Donation per month: 0 USDC</Typography>
+      <Card sx={{ padding: 2, marginTop: 4 }}>
+        <Typography><b>Farming pool:</b> Velodrom sAMM USDC/sUSD</Typography>
+        <Typography><b>Yield distribution:</b> 95/5</Typography>
+        <Typography><b>Total pool size:</b> 1000000 USDC</Typography>
+        <Typography><b>Your deposit:</b> 0 USDC</Typography>
+        <Typography><b>Total profit:</b> 0 USDC</Typography>
+        <Typography><b>Total donation:</b> 0 USDC</Typography>
+        <Typography><b>Donation per month:</b> 0 USDC</Typography>
 
-        <div>
-          <TextField placeholder={'USDC amount'} />
-        </div>
-        <div>
-          <TextField placeholder={'sUSD amount'} />
-        </div>
+        <Box mt={1}>
+          <TextField
+            placeholder={'USDC amount'}
+            value={firstIncome}
+            onChange={e => setFirstIncome(e.target.value)}
+          />
+        </Box>
+        <Box mt={1} mb={1}>
+          <TextField
+            placeholder={'sUSD amount'}
+            value={secondIncome}
+            onChange={e => setSecondIncome(e.target.value)}
+          />
+        </Box>
 
-        <Button variant={'contained'}>Deposit</Button>
-        <Button variant={'outlined'}>Claim</Button>
+        <Stack direction={'row'} spacing={1}>
+          <Button variant={'contained'} onClick={handleDeposit}>Deposit</Button>
+          <Button variant={'outlined'}>Withdraw</Button>
+          <Button variant={'outlined'} onClick={handleClaim}>Claim</Button>
+        </Stack>
+
       </Card>
     </div>
   )

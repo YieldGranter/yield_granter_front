@@ -1,3 +1,14 @@
+export const tokenShortenAbi = ["function approve(address _spender, uint256 _value) public returns (bool success)"]
+
+export const usdcContract = {
+  address: '0x7f5c764cbc14f9669b88837ca1490cca17c31607',
+  ABI: tokenShortenAbi
+}
+export const susdContract = {
+  address: '0x8c6f28f2f1a3c87f0f938b96d27520d9751ec8d9',
+  ABI: tokenShortenAbi
+}
+
 export const ipfsStorageContract = {
   address: "0x2e72d8f03FAF0a39c1a9a9b03995baBBcE281729",
   ABI: [
