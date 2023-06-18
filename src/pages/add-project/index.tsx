@@ -52,7 +52,7 @@ export const AddProjectPage = () => {
           />
           <TextField
             label="Address"
-            value={donationGoal}
+            value={address}
             onChange={e => setAddress(e.target.value)}
             placeholder="Your project address"
           />
