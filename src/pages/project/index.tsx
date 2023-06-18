@@ -2,12 +2,11 @@ import React from "react";
 import {Box, Button, Card, Grid, Stack, TextField, Typography} from "@mui/material";
 import {PROJECTS_MOCK} from "../../MOCK_DATA";
 import {useParams} from "react-router-dom";
-import {ipfsClient} from "../../utils";
+import {ipfsClient, numberToTransactionalNumber} from "../../utils";
 //@ts-ignore
 import { Buffer } from "buffer";
-import {useAccount, useContractWrite} from "wagmi";
+import {useAccount, useContractRead, useContractWrite} from "wagmi";
 import {ipfsStorageContract, susdContract, usdcContract, yieldGranterContract} from "../../constants";
-import bigInt from "big-integer";
 import {UsdcIcon} from "../../components/icons/usdc";
 import {SusdIcon} from "../../components/icons/susd";
 
@@ -49,21 +48,45 @@ export const ProjectPage = () => {
     abi: usdcContract.ABI,
     functionName: 'approve',
   })
+  const usdcAllowance = useContractRead({
+    address: usdcContract.address as `0x${string}`,
+    abi: usdcContract.ABI,
+    functionName: 'allowance',
+    args: [address, yieldGranterContract.address]
+  })
   const susdApproveWrite = useContractWrite({
     address: susdContract.address as `0x${string}`,
     abi: susdContract.ABI,
     functionName: 'approve',
   })
-  const handleDeposit = () => {
+  console.log('tokens: ', {
+    t1: numberToTransactionalNumber(firstIncome, 6),
+    t2: numberToTransactionalNumber(secondIncome)
+  })
+//@ts-ignore
+  console.log('  ', usdcAllowance?.data?.toString(6), typeof usdcAllowance?.data)
+
+  const handleDeposit = async () => {
     // TODO getting approves???
-    // usdcApproveWrite.write({
-    //   args: [address, bigInt(firstIncome)]
+    // await usdcApproveWrite.write({
+    //   args: [yieldGranterContract.address, numberToTransactionalNumber(firstIncome, 6)]
     // })
-    // susdApproveWrite.write({
-    //   args: [address, bigInt(secondIncome)]
+    // await susdApproveWrite.write({
+    //   args: [yieldGranterContract.address, numberToTransactionalNumber(secondIncome)]
     // })
+    console.log('tokens: ', {
+      t1: numberToTransactionalNumber(firstIncome, 6),
+      t2: numberToTransactionalNumber(secondIncome),
+      //@ts-ignore
+      t1Allowance: firstIncome < usdcAllowance?.data?.toString(6)
+    })
+
     yieldDepositWrite.write({
-      args: [bigInt(firstIncome), bigInt(secondIncome), project.address]
+      args: [
+        numberToTransactionalNumber(firstIncome, 6),
+        numberToTransactionalNumber(secondIncome),
+        '0x25238221BE3C80b7dDCD22CCB2Ff32cff32ecF91'.toLowerCase(), // project.address TODO
+      ]
     })
     // let abi = ["function approve(address _spender, uint256 _value) public returns (bool success)"]
     // let provider = ethers.getDefaultProvider('ropsten')
