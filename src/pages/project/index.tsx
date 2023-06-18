@@ -1,16 +1,22 @@
 import React from "react";
-import {Box, Button, Card, Grid, Stack, TextField, Typography} from "@mui/material";
+import {Box, Button, Card, Grid, Stack, Tab, Tabs, TextField, Typography} from "@mui/material";
 import {PROJECTS_MOCK} from "../../MOCK_DATA";
 import {useParams} from "react-router-dom";
 import {ipfsClient, numberToTransactionalNumber} from "../../utils";
 //@ts-ignore
 import { Buffer } from "buffer";
 import {useAccount, useContractRead, useContractWrite} from "wagmi";
-import {ipfsStorageContract, susdContract, usdcContract, yieldGranterContract} from "../../constants";
+import {dolaContract, ipfsStorageContract, susdContract, usdcContract, yieldGranterContract} from "../../constants";
 import {UsdcIcon} from "../../components/icons/usdc";
 import {SusdIcon} from "../../components/icons/susd";
+import {DolaIcon} from "../../components/icons/dola";
 
 export const ProjectPage = () => {
+  const [tab, setTab] = React.useState<0 | 1>(0)
+  const handleChange = (event: React.SyntheticEvent, newValue: 0 | 1) => {
+    setTab(newValue);
+  };
+
   const { address } = useAccount()
   const [project, setProject] = React.useState<any>(PROJECTS_MOCK[0])
   let { projectId } = useParams();
@@ -30,6 +36,7 @@ export const ProjectPage = () => {
     getProject()
   }, [projectId])
 
+  const [zeroIncome, setZeroIncome] = React.useState('')
   const [firstIncome, setFirstIncome] = React.useState('')
   const [secondIncome, setSecondIncome] = React.useState('')
 
@@ -43,6 +50,11 @@ export const ProjectPage = () => {
     abi: yieldGranterContract.ABI,
     functionName: 'claim',
   })
+  const yieldWithdrawWrite = useContractWrite({
+    address: yieldGranterContract.address as `0x${string}`,
+    abi: yieldGranterContract.ABI,
+    functionName: 'withdrawProxy',
+  })
   const usdcApproveWrite = useContractWrite({
     address: usdcContract.address as `0x${string}`,
     abi: usdcContract.ABI,
@@ -52,39 +64,54 @@ export const ProjectPage = () => {
     address: usdcContract.address as `0x${string}`,
     abi: usdcContract.ABI,
     functionName: 'allowance',
-    args: [address, yieldGranterContract.address]
+    args: [address, yieldGranterContract.address],
+    watch: true,
   })
-  const susdApproveWrite = useContractWrite({
-    address: susdContract.address as `0x${string}`,
-    abi: susdContract.ABI,
+  const dolaAllowance = useContractRead({
+    address: dolaContract.address as `0x${string}`,
+    abi: dolaContract.ABI,
+    functionName: 'allowance',
+    args: [address, yieldGranterContract.address],
+    watch: true,
+  })
+  const dolaApproveWrite = useContractWrite({
+    address: dolaContract.address as `0x${string}`,
+    abi: dolaContract.ABI,
     functionName: 'approve',
   })
+
+  // @ts-ignore
+  const isUsdcAllowed = firstIncome < usdcAllowance?.data?.toString(6)
+  // @ts-ignore
+  const isDolaAllowed = secondIncome < dolaAllowance?.data?.toString()
+
   console.log('tokens: ', {
     t1: numberToTransactionalNumber(firstIncome, 6),
-    t2: numberToTransactionalNumber(secondIncome)
+    t2: numberToTransactionalNumber(secondIncome),
+    //@ts-ignore
+    t1Allowance: isUsdcAllowed,
+    // @ts-ignore
+    t2Allowance: isDolaAllowed
   })
-//@ts-ignore
-  console.log('  ', usdcAllowance?.data?.toString(6), typeof usdcAllowance?.data)
+
+  const handleApprove = () => {
+    if (!isUsdcAllowed) {
+      usdcApproveWrite.write({
+        args: [yieldGranterContract.address, numberToTransactionalNumber(firstIncome, 6)]
+      })
+    }
+    if (!isDolaAllowed) {
+      dolaApproveWrite.write({
+        args: [yieldGranterContract.address, numberToTransactionalNumber(secondIncome)]
+      })
+    }
+  }
 
   const handleDeposit = async () => {
-    // TODO getting approves???
-    // await usdcApproveWrite.write({
-    //   args: [yieldGranterContract.address, numberToTransactionalNumber(firstIncome, 6)]
-    // })
-    // await susdApproveWrite.write({
-    //   args: [yieldGranterContract.address, numberToTransactionalNumber(secondIncome)]
-    // })
-    console.log('tokens: ', {
-      t1: numberToTransactionalNumber(firstIncome, 6),
-      t2: numberToTransactionalNumber(secondIncome),
-      //@ts-ignore
-      t1Allowance: firstIncome < usdcAllowance?.data?.toString(6)
-    })
-
     yieldDepositWrite.write({
       args: [
-        numberToTransactionalNumber(firstIncome, 6),
-        numberToTransactionalNumber(secondIncome),
+        numberToTransactionalNumber(firstIncome, 6), // 1000,
+        numberToTransactionalNumber(secondIncome), // 1313000000000000,
         '0x25238221BE3C80b7dDCD22CCB2Ff32cff32ecF91'.toLowerCase(), // project.address TODO
       ]
     })
@@ -95,7 +122,13 @@ export const ProjectPage = () => {
   }
 
   const handleWithdraw = () => {
-    // TODO withdraw
+    yieldWithdrawWrite.write({
+      args: [
+        numberToTransactionalNumber(zeroIncome), // 1313000000000000,
+        numberToTransactionalNumber(firstIncome, 6), // 1000,
+        numberToTransactionalNumber(secondIncome), // 1313000000000000,
+      ]
+    })
   }
 
   const handleClaim = () => {
@@ -134,7 +167,7 @@ export const ProjectPage = () => {
       <Typography variant={'body1'}>{project.description}</Typography>
 
       <Card sx={{ padding: 2, marginTop: 4 }}>
-        <Typography><b>Farming pool:</b> Velodrom sAMM USDC/sUSD</Typography>
+        <Typography><b>Farming pool:</b> Velodrom sAMM USDC/DOLA</Typography>
         <Typography><b>Yield distribution:</b> 95/5</Typography>
         <Typography><b>Total pool size:</b> 1000000 USDC</Typography>
         <Typography><b>Your deposit:</b> 0 USDC</Typography>
@@ -142,32 +175,89 @@ export const ProjectPage = () => {
         <Typography><b>Total donation:</b> 0 USDC</Typography>
         <Typography><b>Donation per month:</b> 0 USDC</Typography>
 
-        <Box mt={1}>
-          <Stack direction={'row'} alignItems={'center'} spacing={1}>
-            <UsdcIcon />
-            <TextField
-              placeholder={'USDC amount'}
-              value={firstIncome}
-              onChange={e => setFirstIncome(e.target.value)}
-            />
-          </Stack>
-        </Box>
-        <Box mt={1} mb={1}>
-          <Stack direction={'row'} alignItems={'center'} spacing={1}>
-            <SusdIcon />
-            <TextField
-              placeholder={'sUSD amount'}
-              value={secondIncome}
-              onChange={e => setSecondIncome(e.target.value)}
-            />
-          </Stack>
-        </Box>
+        <Tabs value={tab} onChange={handleChange}>
+          <Tab label="Deposit" value={0} />
+          <Tab label="Withdraw" value={1} />
+        </Tabs>
 
-        <Stack direction={'row'} spacing={1}>
-            <Button variant={'contained'} onClick={handleDeposit}>Deposit</Button>
+        {tab === 0 && (
+            <>
+              <Box mt={1}>
+                <Stack direction={'row'} alignItems={'center'} spacing={1}>
+                  <UsdcIcon />
+                  <TextField
+                    placeholder={'USDC amount'}
+                    value={firstIncome}
+                    onChange={e => setFirstIncome(e.target.value)}
+                  />
+                </Stack>
+              </Box>
+              <Box mt={1} mb={1}>
+                <Stack direction={'row'} alignItems={'center'} spacing={1}>
+                  <DolaIcon />
+                  <TextField
+                    placeholder={'DOLA amount'}
+                    value={secondIncome}
+                    onChange={e => setSecondIncome(e.target.value)}
+                  />
+                </Stack>
+              </Box>
 
-            <Button variant={'outlined'} onClick={handleClaim}>Claim</Button>
-        </Stack>
+              <Stack direction={'row'} spacing={1}>
+                {
+                  (isUsdcAllowed && isDolaAllowed) ? (
+                    <Button variant={'contained'} onClick={handleDeposit}>Deposit</Button>
+                  ) : (
+                    <Button variant={'contained'} onClick={handleApprove}>Approve</Button>
+                  )
+                }
+
+                <Button variant={'outlined'} onClick={handleClaim}>Claim</Button>
+              </Stack>
+            </>
+        )}
+
+        {tab === 1 && (
+          <>
+            <Box mt={1}>
+              <Stack direction={'row'} alignItems={'center'} spacing={1}>
+                <UsdcIcon />
+                <DolaIcon style={{ marginLeft: '-20px' }} />
+                <TextField
+                  placeholder={'LP Token amount'}
+                  value={zeroIncome}
+                  onChange={e => setZeroIncome(e.target.value)}
+                />
+              </Stack>
+            </Box>
+            <Box mt={1}>
+              <Stack direction={'row'} alignItems={'center'} spacing={1}>
+                <UsdcIcon />
+                <TextField
+                  placeholder={'USDC amount'}
+                  value={firstIncome}
+                  onChange={e => setFirstIncome(e.target.value)}
+                />
+              </Stack>
+            </Box>
+            <Box mt={1} mb={1}>
+              <Stack direction={'row'} alignItems={'center'} spacing={1}>
+                <DolaIcon />
+                <TextField
+                  placeholder={'DOLA amount'}
+                  value={secondIncome}
+                  onChange={e => setSecondIncome(e.target.value)}
+                />
+              </Stack>
+            </Box>
+
+            <Stack direction={'row'} spacing={1}>
+              <Button variant={'outlined'} onClick={handleWithdraw}>
+                Withdraw
+              </Button>
+            </Stack>
+          </>
+        )}
 
       </Card>
     </div>

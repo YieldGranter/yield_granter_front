@@ -229,6 +229,14 @@ export const susdContract = {
   address: '0x8c6f28f2f1a3c87f0f938b96d27520d9751ec8d9',
   ABI: tokenShortenAbi
 }
+export const dolaContract = {
+  address: '0x8aE125E8653821E851F12A49F7765db9a9ce7384',
+  ABI: tokenShortenAbi
+}
+export const lpContract = {
+  address: '0x6c5019d345ec05004a7e7b0623a91a0d9b8d590d',
+  ABI: tokenShortenAbi
+}
 
 export const ipfsStorageContract = {
   address: "0x2e72d8f03FAF0a39c1a9a9b03995baBBcE281729",
@@ -341,7 +349,7 @@ export const ipfsStorageContract = {
 }
 
 export const yieldGranterContract = {
-  address: "0x3c5646f8240da69E6d3adcA6234ae893720Cf5dD",
+  address: "0x38ce364EAB2d26e0d7932D2cd79e20115922fc2f", // 0x2ae262622a9215619D27B0fb02Ede5f4111A7846
   ABI:  [
     {
       "inputs": [
