@@ -1,9 +1,10 @@
 import React from "react";
-import {PROJECTS_MOCK} from "../../MOCK_DATA";
 import {ShortProject} from "./short-project";
 import {ipfsClient} from "../../utils";
 import {useContractRead} from "wagmi";
 import {ipfsStorageContract} from "../../constants";
+import {Buffer} from "buffer";
+import {CircularProgress, Stack} from "@mui/material";
 
 // async getAllProjects() {
 //   const cids = await this.ipfsStorageContract.cids
@@ -18,33 +19,23 @@ import {ipfsStorageContract} from "../../constants";
 // }
 
 export const Projects = () => {
-  const [projects, setProjects] = React.useState<any>(PROJECTS_MOCK)
   const readIpfs = useContractRead({
     address: ipfsStorageContract.address as `0x${string}`,
     abi: ipfsStorageContract.ABI,
     functionName: 'getCIDs',
   }) as any
-  console.log('getCIDs: ', readIpfs.data)
-  React.useEffect(() => {
-    if (readIpfs.data?.data?.length > 0) {
-      const getProjects = async () => {
-        // TODO load donation info for each project from contract
-        const projects = await Promise.all(
-          readIpfs.data?.data?.map((cid: string) => ipfsClient.cat(cid))
-        )
-        setProjects(projects)
-        console.log('projects: ', projects)
-      }
 
-      getProjects()
-    }
-  }, [])
+  if (!readIpfs.data) {
+    return <CircularProgress />
+  }
+
+  console.log('getCIDs: ', readIpfs.data)
 
   return (
-    <div>
-      {projects.map((project: any) => (
-        <ShortProject {...project} />
+    <Stack spacing={3}>
+      {readIpfs.data.map((projectId: any) => (
+        <ShortProject id={projectId} />
       ))}
-    </div>
+    </Stack>
   )
 }

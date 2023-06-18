@@ -1,5 +1,5 @@
 import React from "react";
-import {Box, Button, Card, Grid, Stack, Tab, Tabs, TextField, Typography} from "@mui/material";
+import {Box, Button, Card, CircularProgress, Grid, Stack, Tab, Tabs, TextField, Typography} from "@mui/material";
 import {PROJECTS_MOCK} from "../../MOCK_DATA";
 import {useParams} from "react-router-dom";
 import {ipfsClient, numberToTransactionalNumber} from "../../utils";
@@ -18,10 +18,8 @@ export const ProjectPage = () => {
   };
 
   const { address } = useAccount()
-  const [project, setProject] = React.useState<any>(PROJECTS_MOCK[0])
+  const [project, setProject] = React.useState<any>()
   let { projectId } = useParams();
-
-  projectId = 'QmRxMsceQ2CAcbyuqnkhSxiv5X9QCa1TEnWMXadJQTMUHF' // TODO remove
 
   React.useEffect(() => {
     const getProject = async () => {
@@ -80,6 +78,16 @@ export const ProjectPage = () => {
     functionName: 'approve',
   })
 
+  const yieldContractGetDonated = useContractRead({
+    address: yieldGranterContract.address as `0x${string}`,
+    abi: yieldGranterContract.ABI,
+    functionName: 'getDonatedAmount',
+    args: [project?.address],
+    watch: true,
+  })
+
+  console.log('!!! getDonatedAmount: ', yieldContractGetDonated )
+
   // @ts-ignore
   const isUsdcAllowed = firstIncome < usdcAllowance?.data?.toString(6)
   // @ts-ignore
@@ -135,6 +143,10 @@ export const ProjectPage = () => {
     yieldClaimWrite.write()
   }
 
+  if (!project) {
+    return <CircularProgress />
+  }
+
   return (
     <div>
       <Grid container justifyContent={'space-between'}>
@@ -156,8 +168,10 @@ export const ProjectPage = () => {
             </div>
 
             <div>
-              <Typography variant={'h5'} component={'span' as any}>{project.donationAmount} </Typography>
-              <Typography component={'span' as any}>USDC Received</Typography>
+              <Typography variant={'h5'} component={'span' as any}>
+                {yieldContractGetDonated?.data?.toString() || '...'}
+              </Typography>
+              <Typography component={'span' as any}> USDC Received</Typography>
             </div>
           </Card>
         </Grid>
@@ -168,12 +182,11 @@ export const ProjectPage = () => {
 
       <Card sx={{ padding: 2, marginTop: 4 }}>
         <Typography><b>Farming pool:</b> Velodrom sAMM USDC/DOLA</Typography>
-        <Typography><b>Yield distribution:</b> 95/5</Typography>
-        <Typography><b>Total pool size:</b> 1000000 USDC</Typography>
-        <Typography><b>Your deposit:</b> 0 USDC</Typography>
+        <Typography><b>Yield distribution:</b> 90/10</Typography>
+        {/*<Typography><b>Your deposit:</b> 0 USDC</Typography>
         <Typography><b>Total profit:</b> 0 USDC</Typography>
         <Typography><b>Total donation:</b> 0 USDC</Typography>
-        <Typography><b>Donation per month:</b> 0 USDC</Typography>
+        <Typography><b>Donation per month:</b> 0 USDC</Typography>*/}
 
         <Tabs value={tab} onChange={handleChange}>
           <Tab label="Deposit" value={0} />

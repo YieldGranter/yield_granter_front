@@ -9,33 +9,23 @@ import { ipfsStorageContract } from "../../constants";
 import {ipfsClient} from "../../utils";
 
 export const AddProjectPage = () => {
-  // const [client, setClient] = React.useState<any>()
-  //
-  // React.useEffect(() => {
-  //   const projectId = process.env.REACT_APP_INFURA_PROJECT_ID
-  //   const projectSecret = process.env.REACT_APP_INFURA_PROJECT_SECRET
-  //   const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
-  //
-  //   const client = create({
-  //     host: 'ipfs.infura.io',
-  //     port: 5001,
-  //     protocol: 'https',
-  //     headers: {
-  //       authorization: auth,
-  //     },
-  //   })
-  //
-  //   setClient(client)
-  // }, [])
-
   const { data, isLoading, isSuccess, write, ...res } = useContractWrite({
     address: ipfsStorageContract.address as `0x${string}`,
     abi: ipfsStorageContract.ABI,
     functionName: 'saveCID',
   })
 
+  const [name, setName] = React.useState<any>()
+  const [description, setDescription] = React.useState<any>()
+  const [donationGoal, setDonationGoal] = React.useState<any>()
+
   const handleSaveProject = () => {
-    const jsonString = JSON.stringify(PROJECTS_MOCK[0])
+    const jsonString = JSON.stringify({
+      name,
+      description,
+      donationGoal,
+      donationAmount: 1
+    })
 
     ipfsClient.add(jsonString).then((res: any) => {
       const cidV0 = res.cid.toV0().toString()
@@ -54,14 +44,20 @@ export const AddProjectPage = () => {
         <Stack spacing={2}>
           <TextField
             label="Name"
+            value={name}
+            onChange={e => setName(e.target.value)}
             placeholder="The best of the best project name"
           />
           <TextField
             label="Description"
+            value={description}
+            onChange={e => setDescription(e.target.value)}
             placeholder="The best of the best project description"
           />
           <TextField
             label="Donation Goal"
+            value={donationGoal}
+            onChange={e => setDonationGoal(e.target.value)}
             placeholder="Where's money Lebowski?"
           />
           <Button

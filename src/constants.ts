@@ -350,7 +350,7 @@ export const ipfsStorageContract = {
 
 export const yieldGranterContract = {
   address: "0x38ce364EAB2d26e0d7932D2cd79e20115922fc2f", // 0x2ae262622a9215619D27B0fb02Ede5f4111A7846
-  ABI:  [
+  ABI: [
     {
       "inputs": [
         {
@@ -604,7 +604,8 @@ export const yieldGranterContract = {
           "name": "subtractedValue",
           "type": "uint256"
         }
-      ],"name": "decreaseAllowance",
+      ],
+      "name": "decreaseAllowance",
       "outputs": [
         {
           "internalType": "bool",
@@ -648,6 +649,24 @@ export const yieldGranterContract = {
       ],
       "name": "getDonatedAmount",
       "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getReserves",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
         {
           "internalType": "uint256",
           "name": "",
@@ -833,5 +852,6 @@ export const yieldGranterContract = {
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
-    }]
+    }
+  ]
 }
