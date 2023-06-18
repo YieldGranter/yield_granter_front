@@ -58,7 +58,7 @@ console.log('donationAmount: ', donationAmount)
         </Grid>
         <Grid item xs={3}>
           <Typography>
-            $ {donationAmount} / $ {formatNumber(project.donationGoal)}
+            $ {donationAmount} / $ {bnToString(project.donationGoal)}
           </Typography>
         </Grid>
         <Grid item xs={2}>

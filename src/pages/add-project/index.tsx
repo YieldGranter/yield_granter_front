@@ -1,15 +1,16 @@
 import React from "react";
-import {Box, Button, Stack, TextField} from "@mui/material";
+import {Alert, Box, Button, Stack, TextField} from "@mui/material";
 import {PROJECTS_MOCK} from "../../MOCK_DATA";
 import { create } from 'ipfs-http-client'
 //@ts-ignore
 import { Buffer } from "buffer";
 import { useContractWrite } from 'wagmi'
 import { ipfsStorageContract } from "../../constants";
-import {ipfsClient} from "../../utils";
+import {ipfsClient, numberToTransactionalNumber} from "../../utils";
+import {Link} from "react-router-dom";
 
 export const AddProjectPage = () => {
-  const { data, isLoading, isSuccess, write, ...res } = useContractWrite({
+  const { data, isLoading, isSuccess, isError, error, write, ...res } = useContractWrite({
     address: ipfsStorageContract.address as `0x${string}`,
     abi: ipfsStorageContract.ABI,
     functionName: 'saveCID',
@@ -33,8 +34,8 @@ export const AddProjectPage = () => {
       name,
       address,
       description,
-      donationGoal,
-      donationAmount: 1
+      donationGoal: numberToTransactionalNumber(donationGoal),
+      donationAmount: numberToTransactionalNumber(0)
     })
 
     ipfsClient.add(jsonString).then((res: any) => {
@@ -82,6 +83,27 @@ export const AddProjectPage = () => {
           >
             Save Project
           </Button>
+
+          {isSuccess && (
+            <Box mt={1}>
+              <Alert severity="success">
+                You have successfully created a project
+              </Alert>
+
+              <Box mt={1}>
+                <Link to={`/project/${address}`} style={{ textDecoration: "underline" }}>Project Link</Link>
+              </Box>
+
+            </Box>
+          )}
+
+          {isError && (
+            <Box mt={1}>
+              <Alert severity="error">
+                {error?.message}
+              </Alert>
+            </Box>
+          )}
         </Stack>
       </Box>
     </>

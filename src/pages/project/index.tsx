@@ -149,6 +149,8 @@ export const ProjectPage = () => {
   // @ts-ignore
   const donationAmount = bnToString(yieldContractGetDonated?.data)
 
+  console.log('project: ', project)
+
   return (
     <div>
       <Grid container justifyContent={'space-between'}>
@@ -165,7 +167,7 @@ export const ProjectPage = () => {
         <Grid item>
           <Card sx={{ padding: 2 }}>
             <div>
-              <Typography variant={'h5'} component={'span' as any}>{project.donationGoal} </Typography>
+              <Typography variant={'h5'} component={'span' as any}>{bnToString(project.donationGoal)} </Typography>
               <Typography component={'span' as any}>USDC Donation goal</Typography>
             </div>
 
