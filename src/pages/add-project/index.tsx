@@ -15,13 +15,15 @@ export const AddProjectPage = () => {
     functionName: 'saveCID',
   })
 
-  const [name, setName] = React.useState<any>()
-  const [description, setDescription] = React.useState<any>()
-  const [donationGoal, setDonationGoal] = React.useState<any>()
+  const [name, setName] = React.useState<any>('')
+  const [address, setAddress] = React.useState<any>('')
+  const [description, setDescription] = React.useState<any>('')
+  const [donationGoal, setDonationGoal] = React.useState<any>('')
 
   const handleSaveProject = () => {
     const jsonString = JSON.stringify({
       name,
+      address,
       description,
       donationGoal,
       donationAmount: 1
@@ -47,6 +49,12 @@ export const AddProjectPage = () => {
             value={name}
             onChange={e => setName(e.target.value)}
             placeholder="The best of the best project name"
+          />
+          <TextField
+            label="Address"
+            value={donationGoal}
+            onChange={e => setAddress(e.target.value)}
+            placeholder="Your project address"
           />
           <TextField
             label="Description"

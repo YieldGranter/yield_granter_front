@@ -40,7 +40,7 @@ export const ShortProject = ({
     args: [project?.address],
     watch: true,
   })
-
+console.log('yieldContractGetDonated: ', yieldContractGetDonated)
   if (!project) {
     return <CircularProgress />
   }
