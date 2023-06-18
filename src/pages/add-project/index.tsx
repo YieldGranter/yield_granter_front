@@ -15,6 +15,14 @@ export const AddProjectPage = () => {
     functionName: 'saveCID',
   })
 
+  console.log('saveCID: ', {
+    data,
+    isLoading,
+    isSuccess,
+    write,
+    ...res
+  })
+
   const [name, setName] = React.useState<any>('')
   const [address, setAddress] = React.useState<any>('')
   const [description, setDescription] = React.useState<any>('')
