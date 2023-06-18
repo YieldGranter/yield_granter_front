@@ -1,8 +1,8 @@
 import React from "react";
-import {Box, Button, Card, CircularProgress, Grid, Stack, Tab, Tabs, TextField, Typography} from "@mui/material";
+import {Alert, Box, Button, Card, CircularProgress, Grid, Stack, Tab, Tabs, TextField, Typography} from "@mui/material";
 import {PROJECTS_MOCK} from "../../MOCK_DATA";
 import {useParams} from "react-router-dom";
-import {ipfsClient, numberToTransactionalNumber} from "../../utils";
+import {bnToString, ipfsClient, numberToTransactionalNumber} from "../../utils";
 //@ts-ignore
 import { Buffer } from "buffer";
 import {useAccount, useContractRead, useContractWrite} from "wagmi";
@@ -146,6 +146,8 @@ export const ProjectPage = () => {
   if (!project) {
     return <CircularProgress />
   }
+  // @ts-ignore
+  const donationAmount = bnToString(yieldContractGetDonated?.data)
 
   return (
     <div>
@@ -169,7 +171,7 @@ export const ProjectPage = () => {
 
             <div>
               <Typography variant={'h5'} component={'span' as any}>
-                {yieldContractGetDonated?.data?.toString() || '...'}
+                {donationAmount}
               </Typography>
               <Typography component={'span' as any}> USDC Received</Typography>
             </div>
@@ -195,6 +197,10 @@ export const ProjectPage = () => {
 
         {tab === 0 && (
             <>
+              <Box mt={1}>
+                <Alert severity="info">Note that you need to withdraw all funds from the current deposit to make a new one</Alert>
+              </Box>
+
               <Box mt={1}>
                 <Stack direction={'row'} alignItems={'center'} spacing={1}>
                   <UsdcIcon />

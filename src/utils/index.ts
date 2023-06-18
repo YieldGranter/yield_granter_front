@@ -1,7 +1,7 @@
 //@ts-ignore
 import {Buffer} from "buffer";
 import {create} from "ipfs-http-client";
-import BigNumber from "bignumber.js";
+import BN from "bignumber.js";
 
 export const cropAddress = (address: string) =>
   `${address.substring(0, 5)}...${address.substring(address.length - 4)}`
@@ -25,11 +25,19 @@ export const formatNumber = (number: number) => {
   return new Intl.NumberFormat().format(number)
 }
 
-export function numberToTransactionalNumber(
+export const numberToTransactionalNumber = (
   amount: number | string,
   decimals: number = 18
-): string {
-  return new BigNumber(amount, 10)
-    .multipliedBy(new BigNumber(10).pow(decimals))
+): string => {
+  return new BN(amount, 10)
+    .multipliedBy(new BN(10).pow(decimals))
     .toFixed(0);
+}
+
+export const bnToString = (bn: bigint) => {
+  console.log('bn: ', bn, BigInt(0), bn === BigInt(0))
+  //@ts-ignore
+  if (!bn || bn === BigInt(0)) return 0
+
+  return Number(bn?.toString()) / Math.pow(10, 18)
 }

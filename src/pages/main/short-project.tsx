@@ -1,7 +1,7 @@
 import {Button, Card, CircularProgress, Grid, Typography} from "@mui/material";
 import React from "react";
 import {Link} from "react-router-dom";
-import {formatNumber, ipfsClient} from "../../utils";
+import {bnToString, formatNumber, ipfsClient} from "../../utils";
 import {Buffer} from "buffer";
 import {PROJECTS_MOCK} from "../../MOCK_DATA";
 import {useContractRead} from "wagmi";
@@ -44,22 +44,24 @@ console.log('yieldContractGetDonated: ', yieldContractGetDonated)
   if (!project) {
     return <CircularProgress />
   }
-
+  // @ts-ignore
+  const donationAmount = bnToString(yieldContractGetDonated?.data)
+console.log('donationAmount: ', donationAmount)
   return (
     <Card>
       <Grid container justifyContent={"space-between"} p={2} alignItems={'center'}>
-        <Grid item>
+        <Grid item xs={2}>
           <Typography>{project.name}</Typography>
         </Grid>
-        <Grid item>
+        <Grid item xs={3}>
           <Typography>{project.description}</Typography>
         </Grid>
-        <Grid item>
+        <Grid item xs={3}>
           <Typography>
-            $ {yieldContractGetDonated?.data?.toString() || '...'} / $ {formatNumber(project.donationGoal)}
+            $ {donationAmount} / $ {formatNumber(project.donationGoal)}
           </Typography>
         </Grid>
-        <Grid item>
+        <Grid item xs={2}>
           <Button variant={'contained'}>
             <Link to={`/project/${id}`}>
               Donate
