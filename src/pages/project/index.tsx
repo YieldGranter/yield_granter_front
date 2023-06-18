@@ -5,11 +5,14 @@ import {useParams} from "react-router-dom";
 import {ipfsClient} from "../../utils";
 //@ts-ignore
 import { Buffer } from "buffer";
-import {useContractWrite} from "wagmi";
+import {useAccount, useContractWrite} from "wagmi";
 import {ipfsStorageContract, susdContract, usdcContract, yieldGranterContract} from "../../constants";
 import bigInt from "big-integer";
+import {UsdcIcon} from "../../components/icons/usdc";
+import {SusdIcon} from "../../components/icons/susd";
 
 export const ProjectPage = () => {
+  const { address } = useAccount()
   const [project, setProject] = React.useState<any>(PROJECTS_MOCK[0])
   let { projectId } = useParams();
 
@@ -52,7 +55,13 @@ export const ProjectPage = () => {
     functionName: 'approve',
   })
   const handleDeposit = () => {
-    // TODO getting approves
+    // TODO getting approves???
+    // usdcApproveWrite.write({
+    //   args: [address, bigInt(firstIncome)]
+    // })
+    // susdApproveWrite.write({
+    //   args: [address, bigInt(secondIncome)]
+    // })
     yieldDepositWrite.write({
       args: [bigInt(firstIncome), bigInt(secondIncome), project.address]
     })
@@ -111,24 +120,30 @@ export const ProjectPage = () => {
         <Typography><b>Donation per month:</b> 0 USDC</Typography>
 
         <Box mt={1}>
-          <TextField
-            placeholder={'USDC amount'}
-            value={firstIncome}
-            onChange={e => setFirstIncome(e.target.value)}
-          />
+          <Stack direction={'row'} alignItems={'center'} spacing={1}>
+            <UsdcIcon />
+            <TextField
+              placeholder={'USDC amount'}
+              value={firstIncome}
+              onChange={e => setFirstIncome(e.target.value)}
+            />
+          </Stack>
         </Box>
         <Box mt={1} mb={1}>
-          <TextField
-            placeholder={'sUSD amount'}
-            value={secondIncome}
-            onChange={e => setSecondIncome(e.target.value)}
-          />
+          <Stack direction={'row'} alignItems={'center'} spacing={1}>
+            <SusdIcon />
+            <TextField
+              placeholder={'sUSD amount'}
+              value={secondIncome}
+              onChange={e => setSecondIncome(e.target.value)}
+            />
+          </Stack>
         </Box>
 
         <Stack direction={'row'} spacing={1}>
-          <Button variant={'contained'} onClick={handleDeposit}>Deposit</Button>
-          <Button variant={'outlined'}>Withdraw</Button>
-          <Button variant={'outlined'} onClick={handleClaim}>Claim</Button>
+            <Button variant={'contained'} onClick={handleDeposit}>Deposit</Button>
+
+            <Button variant={'outlined'} onClick={handleClaim}>Claim</Button>
         </Stack>
 
       </Card>
